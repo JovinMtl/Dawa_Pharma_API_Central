@@ -1,0 +1,6 @@
+
+api/migrations
+api/__pycache__
+dawa
+central/__pycache__
+db.sqlite3
