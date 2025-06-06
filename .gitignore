@@ -1,6 +1,6 @@
 
 api/migrations
 api/__pycache__
-dawa
+dawaCentral/
 central/__pycache__
 db.sqlite3
