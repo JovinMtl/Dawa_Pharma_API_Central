@@ -2,6 +2,6 @@ django
 djangorestframework
 djangorestframework-simplejwt
 django-cors-headers
-psycopg2  # for PostgreSQL
+# psycopg2  # for PostgreSQL
 #psycopg2-binary
 python-decouple
