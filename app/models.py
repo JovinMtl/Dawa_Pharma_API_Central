@@ -16,10 +16,14 @@ class Pharma(models.Model):
     joined_on = models.DateTimeField(default=timezone.now)
     last_connected = models.DateTimeField(default=timezone.now)
 
-class MedCollection(models.Model):
-    nom_med = models.CharField(max_length=75, default="med")
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    score = models.IntegerField(default=0)
 
 class User(User):
     pharma = models.ForeignKey(Pharma, on_delete=models.CASCADE)
+
+
+class MedCollection(models.Model):
+    nom_med = models.CharField(max_length=75, default="med")
+    price = models.IntegerField(default=0)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    score = models.IntegerField(default=0)
+    date_per = models.DateField(default=timezone.now)
