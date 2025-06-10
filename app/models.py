@@ -7,14 +7,17 @@ from django.contrib.auth.models import User
 class Pharma(models.Model):
     name_pharma = models.CharField(max_length=35, default="Pharma")
     code_pharma = models.CharField(max_length=8, default="PH000")
-    loc_street = models.CharField(max_length=15, default="Pharma")
-    loc_quarter = models.CharField(max_length=15, default="Pharma")
-    loc_commune = models.CharField(max_length=15, default="Pharma")
-    loc_Province = models.CharField(max_length=15, default="Pharma")
-    loc_country = models.CharField(max_length=15, default="Pharma")
+    loc_street = models.CharField(max_length=15, default="13")
+    loc_quarter = models.CharField(max_length=15, default="Kamenge")
+    loc_commune = models.CharField(max_length=15, default="Ntahangwa")
+    loc_Province = models.CharField(max_length=15, default="Bujumbura")
+    loc_country = models.CharField(max_length=15, default="Burundi")
     ranking = models.IntegerField(default=0)
     joined_on = models.DateTimeField(default=timezone.now)
     last_connected = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        verbose_name = "Pharmacie"
 
 
 class User(User):
