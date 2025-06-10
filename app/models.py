@@ -26,6 +26,7 @@ class User(User):
 
 class MedCollection(models.Model):
     nom_med = models.CharField(max_length=75, default="med")
+    qte = models.IntegerField(default=0)
     price = models.IntegerField(default=0)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     score = models.IntegerField(default=0)
