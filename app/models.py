@@ -18,5 +18,8 @@ class Pharma(models.Model):
 
 class MedCollection(models.Model):
     nom_med = models.CharField(max_length=75, default="med")
-    owner = models.ForeignKey(Pharma, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    score = models.IntegerField(default=0)
 
+class User(User):
+    pharma = models.ForeignKey(Pharma, on_delete=models.CASCADE)
