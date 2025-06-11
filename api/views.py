@@ -11,26 +11,30 @@ from app.models import MedCollection, User, Pharma
 
 
 class GeneralOperations(viewsets.ViewSet):
-    @action(methods=['post'], detail=False,\
+    """
+    Handles general operations
+    """
+    @action(methods=['get'], detail=False,\
              permission_classes= [IsAdminUser])
     def collection_len(self, request):
         """
-        Cancel the operation of Sell, for a given 
-        ID in umutiSold.
+        gives the length of the collection.
         """
-        meds_len = MedCollection.objects.all()
-        return JsonResponse({
-            'response': 403
+        meds_len = MedCollection.objects.filter(qte__gte=1).count()
+        return Response({
+            'response': meds_len
         })
 
 class InputOperations(viewsets.ViewSet):
     @action(methods=['post'], detail=False,\
-             permission_classes= [IsAdminUser])
-    def cancelSell(self, request):
+             permission_classes= [ AllowAny ])
+    def updateCollection(self, request):
         """
         Cancel the operation of Sell, for a given 
         ID in umutiSold.
         """
+        inputs = request.data
+        print(f"The data: {inputs}")
         return JsonResponse({
             'response': 403
         })
