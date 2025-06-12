@@ -35,4 +35,4 @@ class MedCollection(models.Model):
     price = models.IntegerField(default=0)
     owner = models.ForeignKey(Pharma, on_delete=models.CASCADE)
     score = models.IntegerField(default=0)
-    date_per = models.TextField()
+    date_per = models.CharField(max_length=35, default="2028")
