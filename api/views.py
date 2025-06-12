@@ -1,11 +1,13 @@
 from django.http import JsonResponse
+# from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny,\
     IsAdminUser
 
-from app.models import MedCollection, User, Pharma
+from app.models import MedCollection
+from .shared.strToList import StringToList
 
 # Create your views here.
 
@@ -26,17 +28,23 @@ class GeneralOperations(viewsets.ViewSet):
         })
 
 class InputOperations(viewsets.ViewSet):
-    @action(methods=['post'], detail=False,\
-             permission_classes= [ AllowAny ])
+    @action(methods=['post', 'get'], detail=False,\
+             permission_classes= [ IsAuthenticated ])
     def updateCollection(self, request):
         """
         Cancel the operation of Sell, for a given 
         ID in umutiSold.
         """
-        inputs = request.data
-        print(f"The data: {inputs}")
+        inputs = request.data.get('data', None)
+        if not inputs:
+            print(f"THe failed user: {dir(request.user)}")
+            return JsonResponse({
+                'response': 403
+            })
+        data_list = list(StringToList(inputs).toList())
+        print(f"The _list: {data_list[:2]} from {request.user}")
         return JsonResponse({
-            'response': 403
+            'response': 200
         })
 
 

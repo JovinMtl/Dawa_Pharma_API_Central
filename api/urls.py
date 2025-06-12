@@ -15,11 +15,6 @@ router = DefaultRouter()
 router.register(r'gOps', GeneralOperations, basename='general' )
 router.register(r'in', InputOperations, basename='input' )
 router.register(r'out', OutputOperations, basename='output' )
-# router.register(r'in', EntrantImiti, basename='entrants' )
-# router.register(r'out', ImitiOut, basename='sortant')
-# router.register(r'rep', Rapport, basename='rep')
-# router.register(r'assu', Assurances, basename='assurances')
-# router.register(r'gOps', GeneralOps, basename='gops')
 
 urlpatterns = [
     path('', include(router.urls)),
