@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny,\
 
 from app.models import MedCollection
 from .shared.strToList import StringToList
+import time
 
 # Create your views here.
 
@@ -37,12 +38,13 @@ class InputOperations(viewsets.ViewSet):
         """
         inputs = request.data.get('data', None)
         if not inputs:
-            print(f"THe failed user: {dir(request.user)}")
+            print(f"THe failed user: {(request.user)}")
             return JsonResponse({
                 'response': 403
             })
-        data_list = list(StringToList(inputs).toList())
-        print(f"The _list: {data_list[:2]} from {request.user}")
+        # data_list = StringToList(inputs).toList()
+        print(f"The _list: {(inputs)} from {request.user}")
+        time.sleep(5)
         return JsonResponse({
             'response': 200
         })
