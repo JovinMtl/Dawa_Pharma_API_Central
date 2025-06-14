@@ -35,3 +35,4 @@ class MedCollection(models.Model):
     price = models.IntegerField(default=0)
     owner = models.ForeignKey(Pharma, on_delete=models.CASCADE)
     date_per = models.CharField(max_length=35, default="2028")
+    sync_code = models.IntegerField(default=0)
