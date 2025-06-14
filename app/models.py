@@ -19,7 +19,7 @@ class Pharma(models.Model):
     loc_commune = models.CharField(max_length=15, default="Ntahangwa")
     loc_Province = models.CharField(max_length=15, default="Bujumbura")
     loc_country = models.CharField(max_length=15, default="Burundi")
-    ranking = models.IntegerField(default=0)
+    score = models.IntegerField(default=0)
     joined_on = models.DateTimeField(default=timezone.now)
     last_connected = models.DateTimeField(default=timezone.now)
 
@@ -34,5 +34,4 @@ class MedCollection(models.Model):
     qte = models.IntegerField(default=0)
     price = models.IntegerField(default=0)
     owner = models.ForeignKey(Pharma, on_delete=models.CASCADE)
-    score = models.IntegerField(default=0)
     date_per = models.CharField(max_length=35, default="2028")
