@@ -105,6 +105,17 @@ class InputOperations(viewsets.ViewSet):
         return Response({
             'response': 1
         })
+    
+    @action(methods=['post', 'get'], detail=False,\
+             permission_classes= [ IsAuthenticated ])
+    def request_code_sync(self, request):
+        user = request.user
+        pharma = Pharma.objects.get(owner=user)
+        med = MedCollection.objects.filter(owner=pharma).first()
+        sync_code = med.sync_code or 0
+        return Response({
+            'response': sync_code
+        })
 
 
 class OutputOperations(viewsets.ViewSet):
