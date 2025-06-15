@@ -58,7 +58,10 @@ class InputOperations(viewsets.ViewSet):
                                            sync_code=sync_code)
                 continue
             else:
-                med_update = self._med_updater(med_found=med_found, med=med)
+                med_update = self._med_updater(med_found=med_found, \
+                    med=med, sync_code=sync_code)
+        
+        
         time.sleep(5)
         return JsonResponse({
             'response': 200
@@ -89,6 +92,19 @@ class InputOperations(viewsets.ViewSet):
         med_found.save()
 
         return 200
+    
+    @action(methods=['post', 'get'], detail=False,\
+             permission_classes= [ IsAuthenticated ])
+    def clean_outdated(self, request):
+        # needs to delete untouched instances / garbage
+        user = request.user
+        pharma = Pharma.objects.get(owner=user)
+        sync_code = request.data
+        unsync_meds = MedCollection.objects.filter(owner=pharma)\
+            .exclude(sync_code=sync_code).delete()
+        return Response({
+            'response': 1
+        })
 
 
 class OutputOperations(viewsets.ViewSet):
