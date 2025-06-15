@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.db.models import Q
 # from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -44,17 +45,36 @@ class InputOperations(viewsets.ViewSet):
             })
         user = request.user
         pharma = Pharma.objects.get(owner=user)
+        sync_code = None
         # data_list = StringToList(meds).toList()
         print(f"The _list: {type(meds)} from {request.user}")
+        
+        for med in meds:
+            try:
+                med_found = MedCollection.objects.get(Q(owner=pharma)\
+                            & Q(nom_med=med.nom_med))
+            except MedCollection.DoesNotExist:
+                new_med = self._create_med(med=med, sync_code=sync_code)
         time.sleep(5)
         return JsonResponse({
             'response': 200
         })
+    
     def _give_code(self, num)->int:
         codes = [1, 2, 3, 4, 5]
         if (num > 4) or (num < 0):
             num = 0
         return codes[num]
+    
+    def _create_med(self, med, pharma, sync_code=0)->int:
+        med = {'nom_med': 'Zalain Ovule B/1', 'qte': 3, 'price': 55000, 'lot': "['09-2028']"}
+        new_med = MedCollection.objects.create(owner=pharma)
+        new_med.nom_med = med['nom_med']
+        new_med.qte = med['qte']
+        new_med.price = med['price']
+        new_med.date_per = str(med['lot'])[:34]
+        new_med.sync_code = sync_code
+        return 200
 
 
 class OutputOperations(viewsets.ViewSet):
