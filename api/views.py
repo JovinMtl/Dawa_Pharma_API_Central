@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny,\
     IsAdminUser
 
-from app.models import MedCollection
+from app.models import MedCollection, Pharma
 from .shared.strToList import StringToList
 import time
 
@@ -36,18 +36,25 @@ class InputOperations(viewsets.ViewSet):
         Cancel the operation of Sell, for a given 
         ID in umutiSold.
         """
-        inputs = request.data.get('data', None)
-        if not inputs:
+        meds = request.data.get('data', None)
+        if not meds:
             print(f"THe failed user: {(request.user)}")
             return JsonResponse({
                 'response': 403
             })
-        # data_list = StringToList(inputs).toList()
-        print(f"The _list: {(inputs)} from {request.user}")
+        user = request.user
+        pharma = Pharma.objects.get(owner=user)
+        # data_list = StringToList(meds).toList()
+        print(f"The _list: {type(meds)} from {request.user}")
         time.sleep(5)
         return JsonResponse({
             'response': 200
         })
+    def _give_code(self, num)->int:
+        codes = [1, 2, 3, 4, 5]
+        if (num > 4) or (num < 0):
+            num = 0
+        return codes[num]
 
 
 class OutputOperations(viewsets.ViewSet):
