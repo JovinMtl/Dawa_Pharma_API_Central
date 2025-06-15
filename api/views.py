@@ -45,7 +45,7 @@ class InputOperations(viewsets.ViewSet):
             })
         user = request.user
         pharma = Pharma.objects.get(owner=user)
-        sync_code = None
+        sync_code = 1
         # data_list = StringToList(meds).toList()
         print(f"The _list: {type(meds)} from {request.user}")
         
@@ -54,7 +54,11 @@ class InputOperations(viewsets.ViewSet):
                 med_found = MedCollection.objects.get(Q(owner=pharma)\
                             & Q(nom_med=med.nom_med))
             except MedCollection.DoesNotExist:
-                new_med = self._create_med(med=med, sync_code=sync_code)
+                new_med = self._create_med(med=med,pharma=pharma, \
+                                           sync_code=sync_code)
+                continue
+            else:
+                med_update = self._med_updater(med_found=med_found, med=med)
         time.sleep(5)
         return JsonResponse({
             'response': 200
@@ -74,6 +78,16 @@ class InputOperations(viewsets.ViewSet):
         new_med.price = med['price']
         new_med.date_per = str(med['lot'])[:34]
         new_med.sync_code = sync_code
+        new_med.save()
+        return 200
+    
+    def _med_updater(self, med_found:MedCollection, med:MedCollection, sync_code:int=0)->int:
+        med_found.qte = med.qte
+        med_found.price = med.price
+        med_found.date_per = med.date_per
+        med_found.sync_code = sync_code
+        med_found.save()
+
         return 200
 
 
