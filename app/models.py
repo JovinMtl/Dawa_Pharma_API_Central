@@ -36,3 +36,6 @@ class MedCollection(models.Model):
     owner = models.ForeignKey(Pharma, on_delete=models.CASCADE)
     date_per = models.CharField(max_length=35, default="2028")
     sync_code = models.IntegerField(default=0)
+
+    def __str__(self) -> str:
+        return f"{(self.nom_med)[:10]}, {self.price}:{self.owner.name_pharma}"
