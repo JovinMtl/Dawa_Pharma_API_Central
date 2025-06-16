@@ -45,36 +45,28 @@ class InputOperations(viewsets.ViewSet):
             })
         user = request.user
         pharma = Pharma.objects.get(owner=user)
-        sync_code = 1
-        # data_list = StringToList(meds).toList()
-        print(f"The _list: {type(meds)} from {request.user}")
+        sync_code = request.data.get("sync_code", 1)
         
+        counter = 1
         for med in meds:
             try:
                 med_found = MedCollection.objects.get(Q(owner=pharma)\
-                            & Q(nom_med=med.nom_med))
+                            & Q(nom_med=med['nom_med']))
             except MedCollection.DoesNotExist:
                 new_med = self._create_med(med=med,pharma=pharma, \
                                            sync_code=sync_code)
-                continue
             else:
                 med_update = self._med_updater(med_found=med_found, \
                     med=med, sync_code=sync_code)
-        
-        
-        time.sleep(5)
+            
+            counter += 1
+
         return JsonResponse({
             'response': 200
         })
     
-    def _give_code(self, num)->int:
-        codes = [1, 2, 3, 4, 5]
-        if (num > 4) or (num < 0):
-            num = 0
-        return codes[num]
-    
     def _create_med(self, med, pharma, sync_code=0)->int:
-        med = {'nom_med': 'Zalain Ovule B/1', 'qte': 3, 'price': 55000, 'lot': "['09-2028']"}
+        # med = {'nom_med': 'Zalain Ovule B/1', 'qte': 3, 'price': 55000, 'lot': "['09-2028']"}
         new_med = MedCollection.objects.create(owner=pharma)
         new_med.nom_med = med['nom_med']
         new_med.qte = med['qte']
@@ -84,10 +76,10 @@ class InputOperations(viewsets.ViewSet):
         new_med.save()
         return 200
     
-    def _med_updater(self, med_found:MedCollection, med:MedCollection, sync_code:int=0)->int:
-        med_found.qte = med.qte
-        med_found.price = med.price
-        med_found.date_per = med.date_per
+    def _med_updater(self, med_found:MedCollection, med:dict, sync_code:int=0)->int:
+        med_found.qte = med['qte']
+        med_found.price = med['price']
+        med_found.date_per = str(med['lot'])[:34]
         med_found.sync_code = sync_code
         med_found.save()
 
@@ -99,7 +91,8 @@ class InputOperations(viewsets.ViewSet):
         # needs to delete untouched instances / garbage
         user = request.user
         pharma = Pharma.objects.get(owner=user)
-        sync_code = request.data
+        sync_code = request.data.get("sync_code", 1)
+        print(f"The sync_code to consider: {sync_code} . from {request.data}")
         unsync_meds = MedCollection.objects.filter(owner=pharma)\
             .exclude(sync_code=sync_code).delete()
         return Response({
