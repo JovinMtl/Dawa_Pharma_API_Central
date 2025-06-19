@@ -8,6 +8,9 @@ from rest_framework.permissions import IsAuthenticated, AllowAny,\
     IsAdminUser
 
 from app.models import MedCollection, Pharma
+
+from .serializers import MedCollectionSeria
+
 from .shared.strToList import StringToList
 import time
 
@@ -28,6 +31,23 @@ class GeneralOperations(viewsets.ViewSet):
         return Response({
             'response': meds_len
         })
+    
+    @action(methods=['get', 'post'], detail=False,\
+             permission_classes= [IsAuthenticated])
+    def search_meds(self, request):
+        """
+        gives the length of the collection.
+        """
+        # meds_len = MedCollection.objects.filter(qte__gte=1).count()
+        print(f"The query sent: {request.data}")
+        query = "cipro"
+        queryset = MedCollection.objects.filter(nom_med__icontains=query)
+        queryset_s = MedCollectionSeria(queryset, many=True)
+        
+        if queryset_s.is_valid:
+            return Response({
+                'response': queryset_s.data
+            })
 
 class InputOperations(viewsets.ViewSet):
     @action(methods=['post', 'get'], detail=False,\
@@ -92,7 +112,6 @@ class InputOperations(viewsets.ViewSet):
         user = request.user
         pharma = Pharma.objects.get(owner=user)
         sync_code = request.data.get("sync_code", 1)
-        print(f"The sync_code to consider: {sync_code} . from {request.data}")
         unsync_meds = MedCollection.objects.filter(owner=pharma)\
             .exclude(sync_code=sync_code).delete()
         return Response({
