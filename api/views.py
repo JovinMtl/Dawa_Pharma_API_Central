@@ -33,14 +33,15 @@ class GeneralOperations(viewsets.ViewSet):
         })
     
     @action(methods=['post', 'get'], detail=False,\
-             permission_classes= [AllowAny])
+             permission_classes= [IsAuthenticated])
     def search_meds(self, request):
         """
         gives the length of the collection.
         """
         # meds_len = MedCollection.objects.filter(qte__gte=1).count()
-        print(f"The query sent: {request.data}")
-        query = " TRA ".strip()
+        query = request.data.get("imiti", {'value':{"query":''}}).get('value', {'query':''}).get('query')
+        query = str(query).strip()
+        print(f"the query: {query}")
         queryset = MedCollection.objects.filter(nom_med__icontains=query)
         queryset_s = MedCollectionSeria(queryset, many=True)
         
