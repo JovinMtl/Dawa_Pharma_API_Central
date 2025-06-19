@@ -40,7 +40,7 @@ class GeneralOperations(viewsets.ViewSet):
         """
         # meds_len = MedCollection.objects.filter(qte__gte=1).count()
         print(f"The query sent: {request.data}")
-        query = "cipro"
+        query = " tra ".strip()
         queryset = MedCollection.objects.filter(nom_med__icontains=query)
         queryset_s = MedCollectionSeria(queryset, many=True)
         
