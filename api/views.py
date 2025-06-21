@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.db.models import Q
+from django.utils import timezone
 # from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -67,6 +68,8 @@ class GeneralOperations(viewsets.ViewSet):
             'response': pharma_obj
         })
 
+
+
 class InputOperations(viewsets.ViewSet):
     @action(methods=['post', 'get'], detail=False,\
              permission_classes= [ IsAuthenticated ])
@@ -98,6 +101,9 @@ class InputOperations(viewsets.ViewSet):
                     med=med, sync_code=sync_code)
             
             counter += 1
+        
+        pharma.last_connected = timezone.now()
+        pharma.save()
 
         return JsonResponse({
             'response': 200
