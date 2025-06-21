@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny,\
 
 from app.models import MedCollection, Pharma
 
-from .serializers import MedCollectionSeria
+from .serializers import MedCollectionSeria, PharmaSeria
 
 from .shared.strToList import StringToList
 import time
@@ -49,6 +49,23 @@ class GeneralOperations(viewsets.ViewSet):
             return Response({
                 'response': queryset_s.data
             })
+    
+    @action(methods=['post', 'get'], detail=False,\
+             permission_classes= [ IsAuthenticated ])
+    def get_pharmas(self, request):
+        user = request.user
+        pharma = Pharma.objects.all()
+
+        pharma_obj = {}
+
+        for pha in pharma:
+            pha_s = PharmaSeria(pha)
+            if pha_s.is_valid:
+                pharma_obj[pha.id] = pha_s.data
+        
+        return Response({
+            'response': pharma_obj
+        })
 
 class InputOperations(viewsets.ViewSet):
     @action(methods=['post', 'get'], detail=False,\
