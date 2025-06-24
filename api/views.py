@@ -168,7 +168,7 @@ class InputOperations(viewsets.ViewSet):
         code_pharma = infos.get('code_pharma')
         if int(code_pharma) and code_pharma > 1000:
             # update username, password, and pharma
-            update_pharma = self._update_pharma(infos=infos)
+            # update_pharma = self._update_pharma(infos=infos)
             pass
         elif int(code_pharma) and code_pharma == 1000:
             # new user and pharma
@@ -179,14 +179,14 @@ class InputOperations(viewsets.ViewSet):
         })
     
     def _new_pharma(self, infos)->int:
-        infos = {'name_pharma': 'Pharma', \
-                 'tel': 0, 'loc_street': '13', \
-                    'loc_quarter': 'Kamenge', \
-                    'loc_commune': 'Ntahangwa', \
-                    'loc_Province': 'Bujumbura', \
-                    'remote_password': 'done', \
-                    'remote_password2': 'done', \
-                    'code_pharma': 1000}
+        # infos = {'name_pharma': 'Pharma', \
+        #          'tel': 0, 'loc_street': '13', \
+        #             'loc_quarter': 'Kamenge', \
+        #             'loc_commune': 'Ntahangwa', \
+        #             'loc_Province': 'Bujumbura', \
+        #             'remote_password': 'done', \
+        #             'remote_password2': 'done', \
+        #             'code_pharma': 1000}
         last_pharma = Pharma.objects.last()
         last_code = 1001
         name_pharma = infos.get("name_pharma", '')
@@ -206,10 +206,11 @@ class InputOperations(viewsets.ViewSet):
             new_user = self.__create_user(username=name_pharma, password=password)
             new_pharma = Pharma.objects.create(name_pharma=name_pharma, owner=new_user)
             new_pharma.code_pharma = last_code + 1
-            new_pharma.loc_street = infos.get("loc_street", '')
-            new_pharma.loc_quarter = infos.get("loc_quarter", '')
-            new_pharma.loc_commune = infos.get("loc_commune", '')
-            new_pharma.loc_Province = infos.get("loc_Province", '')
+            new_pharma.tel = int(infos.get('tel',0))
+            new_pharma.loc_street = infos.get("loc_street", '')[:14]
+            new_pharma.loc_quarter = infos.get("loc_quarter", '')[:14]
+            new_pharma.loc_commune = infos.get("loc_commune", '')[:14]
+            new_pharma.loc_Province = infos.get("loc_Province", '')[:14]
 
             new_pharma.save()
 
