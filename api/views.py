@@ -191,6 +191,9 @@ class InputOperations(viewsets.ViewSet):
         last_code = 1001
         name_pharma = infos.get("name_pharma", '')
         is_new_pharma = self.__check_pharma(name_pharma=name_pharma)
+        if not is_new_pharma:
+            return 403
+        
         remote_password = infos.get("remote_password", 'j')
         remote_password2 = infos.get("remote_password2", 'j_')
         password = ''
@@ -201,9 +204,16 @@ class InputOperations(viewsets.ViewSet):
         new_user = None
         if len(password) >= 8 and len(name_pharma) >= 5:
             new_user = self.__create_user(username=name_pharma, password=password)
-        new_pharma = Pharma.objects.create()
+            new_pharma = Pharma.objects.create(name_pharma=name_pharma, owner=new_user)
+            new_pharma.code_pharma = last_code + 1
+            new_pharma.loc_street = infos.get("loc_street", '')
+            new_pharma.loc_quarter = infos.get("loc_quarter", '')
+            new_pharma.loc_commune = infos.get("loc_commune", '')
+            new_pharma.loc_Province = infos.get("loc_Province", '')
 
-        return 0
+            new_pharma.save()
+
+        return 200
     
     def __create_user(self, username='pharma', password="pharma1212")->User:
         new_user = User.objects.create(username=username)
