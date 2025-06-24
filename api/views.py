@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.db.models import Q
 from django.utils import timezone
+from django.contrib.auth.models import User
 # from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -152,6 +153,69 @@ class InputOperations(viewsets.ViewSet):
         return Response({
             'response': sync_code
         })
+    
+    @action(methods=['post', 'get'], detail=False,\
+             permission_classes= [ IsAuthenticated ])
+    def update_infos(self, request):
+        # needs to delete untouched instances / garbage
+        user = request.user
+        infos = request.data.get("imiti", {'value':{"query":''}})
+        print(f"The infos to update are: {infos}")
+        if not infos:
+            return Response({
+                'response': 0
+            })
+        code_pharma = infos.get('code_pharma')
+        if int(code_pharma) and code_pharma > 1000:
+            # update username, password, and pharma
+            update_pharma = self._update_pharma(infos=infos)
+            pass
+        elif int(code_pharma) and code_pharma == 1000:
+            # new user and pharma
+            new_pharma = self._new_pharma(infos=infos)
+            pass
+        return Response({
+            'response': 1
+        })
+    
+    def _new_pharma(self, infos)->int:
+        infos = {'name_pharma': 'Pharma', \
+                 'tel': 0, 'loc_street': '13', \
+                    'loc_quarter': 'Kamenge', \
+                    'loc_commune': 'Ntahangwa', \
+                    'loc_Province': 'Bujumbura', \
+                    'remote_password': 'done', \
+                    'remote_password2': 'done', \
+                    'code_pharma': 1000}
+        last_pharma = Pharma.objects.last()
+        last_code = 1001
+        name_pharma = infos.get("name_pharma", '')
+        is_new_pharma = self.__check_pharma(name_pharma=name_pharma)
+        remote_password = infos.get("remote_password", 'j')
+        remote_password2 = infos.get("remote_password2", 'j_')
+        password = ''
+        if remote_password == remote_password2:
+            password = remote_password
+        if last_pharma:
+            last_code = int(last_pharma.code_pharma)
+        new_user = None
+        if len(password) >= 8 and len(name_pharma) >= 5:
+            new_user = self.__create_user(username=name_pharma, password=password)
+        new_pharma = Pharma.objects.create()
+
+        return 0
+    
+    def __create_user(self, username='pharma', password="pharma1212")->User:
+        new_user = User.objects.create(username=username)
+        new_user.set_password(password)
+        new_user.save()
+
+        return new_user
+    def __check_pharma(self, name_pharma='pharma')->int:
+        is_new_pharma = Pharma.objects.filter(name_pharma=name_pharma)
+        if len(is_new_pharma):
+            return False
+        return True
 
 
 class OutputOperations(viewsets.ViewSet):
