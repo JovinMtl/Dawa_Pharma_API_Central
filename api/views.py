@@ -168,28 +168,57 @@ class InputOperations(viewsets.ViewSet):
         code_pharma = infos.get('code_pharma')
         if int(code_pharma) and code_pharma > 1000:
             # update username, password, and pharma
-            # update_pharma = self._update_pharma(infos=infos)
-            pass
+            update_pharma = self._update_pharma(infos=infos)
+            if update_pharma == 200:
+                return Response({
+                    'response': 1,
+                    'updated': update_pharma
+                })
+
         elif int(code_pharma) and code_pharma == 1000:
             # new user and pharma
             new_pharma = self._new_pharma(infos=infos)
-            pass
+            if new_pharma > 1000:
+                return Response({
+                    'response': 1,
+                    'code_pharma': new_pharma
+                })
         return Response({
-            'response': 1
+            'response': 0
         })
     
+    def _update_pharma(self, infos)->int:
+        code_pharma = infos.get("code_pharma",None)
+        the_pharma = Pharma.objects.filter(code_pharma=code_pharma)[0]
+        if not the_pharma:
+            return 403
+        name_pharma = infos.get("name_pharma", None)
+        new_passwd1 = infos.get("remote_password", 'j')
+        new_passwd2 = infos.get("remote_password2", 'j')
+        new_name_pharma = False
+        ex_name_pharma = (name_pharma == the_pharma.name_pharma)
+        the_user = the_pharma.owner
+        if not ex_name_pharma:
+            the_user.username = name_pharma
+            print(f"changed username")
+        if new_passwd1 == new_passwd2:
+            the_user.set_password(new_passwd1)
+            the_user.save()
+
+        the_pharma.name_pharma = name_pharma
+        the_pharma.tel = int(infos.get('tel',0))
+        the_pharma.loc_street = infos.get("loc_street", '')[:14]
+        the_pharma.loc_quarter = infos.get("loc_quarter", '')[:14]
+        the_pharma.loc_commune = infos.get("loc_commune", '')[:14]
+        the_pharma.loc_Province = infos.get("loc_Province", '')[:14]
+        the_pharma.save()
+
+        return 200
+    
     def _new_pharma(self, infos)->int:
-        # infos = {'name_pharma': 'Pharma', \
-        #          'tel': 0, 'loc_street': '13', \
-        #             'loc_quarter': 'Kamenge', \
-        #             'loc_commune': 'Ntahangwa', \
-        #             'loc_Province': 'Bujumbura', \
-        #             'remote_password': 'done', \
-        #             'remote_password2': 'done', \
-        #             'code_pharma': 1000}
         last_pharma = Pharma.objects.last()
         last_code = 1001
-        name_pharma = infos.get("name_pharma", '')
+        name_pharma = infos.get("name_pharma", '')[:34]
         is_new_pharma = self.__check_pharma(name_pharma=name_pharma)
         if not is_new_pharma:
             return 403
@@ -214,7 +243,7 @@ class InputOperations(viewsets.ViewSet):
 
             new_pharma.save()
 
-        return 200
+        return last_code
     
     def __create_user(self, username='pharma', password="pharma1212")->User:
         new_user = User.objects.create(username=username)
