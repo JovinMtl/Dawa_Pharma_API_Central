@@ -1,6 +1,7 @@
 
 api/migrations
 app/migrations
+app/__pycache__
 api/__pycache__
 dawaCentral/
 central/__pycache__
