@@ -69,16 +69,6 @@ class GeneralOperations(viewsets.ViewSet):
         return Response({
             'response': pharma_obj
         })
-    
-    @action(methods=['post', 'get'], detail=False,\
-             permission_classes= [ IsAuthenticated ])
-    def seTup(self, request):
-        user = request.user
-        is_pharma = None
-        pharmas = MedCollection.objects.all()
-        return Response({
-            'response': len(pharmas)
-        })
 
 
 
@@ -137,7 +127,6 @@ class InputOperations(viewsets.ViewSet):
     def _create_pharma(self, user:User)->Pharma:
         if not user:
             return None
-        print(f"His username: {user.username}, of type:{type(user)}")
         user_obj = User.objects.get(username=user.username)
         new_pharma = Pharma.objects.create(owner=user_obj)
         new_pharma.name_pharma = user_obj.username
@@ -147,7 +136,6 @@ class InputOperations(viewsets.ViewSet):
             last_code = int(last_pharma.code_pharma) or 1000 + 1
         new_pharma.code_pharma = last_code
         new_pharma.save()
-        print(f"The created pharma: {new_pharma}")
 
         return new_pharma
     
