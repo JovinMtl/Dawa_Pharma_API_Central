@@ -13,7 +13,7 @@ def first_user():
 class Pharma(models.Model):
     name_pharma = models.CharField(max_length=35, default="Pharma", unique=True)
     code_pharma = models.IntegerField(default=1000)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, default=first_user)
     tel = models.IntegerField(default=0)
     loc_street = models.CharField(max_length=15, default="13")
     loc_quarter = models.CharField(max_length=15, default="Kamenge")

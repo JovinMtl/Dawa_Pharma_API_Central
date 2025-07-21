@@ -68,6 +68,16 @@ class GeneralOperations(viewsets.ViewSet):
         return Response({
             'response': pharma_obj
         })
+    
+    @action(methods=['post', 'get'], detail=False,\
+             permission_classes= [ IsAuthenticated ])
+    def seTup(self, request):
+        user = request.user
+        is_pharma = None
+        pharmas = Pharma.objects.all()
+        return Response({
+            'response': len(pharmas)
+        })
 
 
 
