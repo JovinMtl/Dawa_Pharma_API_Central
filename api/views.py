@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.db.models import Q
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.db.utils import OperationalError
 # from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -96,7 +97,20 @@ class InputOperations(viewsets.ViewSet):
                 'response': 403
             })
         user = request.user
-        pharma = Pharma.objects.get(owner=user)
+        pharma = None
+        pharmas = pharma = Pharma.objects.filter(name_pharma=user.username)
+        if len(pharmas):
+            pharma = pharmas[0]
+            print(f"Found pharma")
+        else:
+            print(f"Will create Pharma.")
+            pharma = self._create_pharma(user=user)
+            print("Created Pharma")
+        
+        if not pharma:
+            return Response({
+                'response': 404
+            })
         sync_code = request.data.get("sync_code", 1)
         
         counter = 1
@@ -119,6 +133,22 @@ class InputOperations(viewsets.ViewSet):
         return JsonResponse({
             'response': 200
         })
+    
+    def _create_pharma(self, user:User)->Pharma:
+        if not user:
+            return None
+        print(f"His username: {user.username}, of type:{type(user)}")
+        user_obj = User.objects.get(username=user.username)
+        new_pharma = Pharma.objects.create(owner=user_obj)
+        last_pharma = Pharma.objects.last()
+        last_code = 1001
+        if last_pharma:
+            last_code = int(last_pharma.code_pharma) or 1000 + 1
+        new_pharma.code_pharma = last_code
+        new_pharma.save()
+        print(f"The created pharma: {new_pharma}")
+
+        return new_pharma
     
     def _create_med(self, med, pharma, sync_code=0)->int:
         # med = {'nom_med': 'Zalain Ovule B/1', 'qte': 3, 'price': 55000, 'lot': "['09-2028']"}
