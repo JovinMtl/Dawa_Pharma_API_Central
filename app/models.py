@@ -8,6 +8,7 @@ def first_user():
     return user
 
 
+
 # Create your models here.
 
 class Pharma(models.Model):
@@ -29,14 +30,17 @@ class Pharma(models.Model):
     class Meta:
         verbose_name = "Pharmacie"
 
+def first_pharma():
+    pharma = Pharma.objects.first()
+    return pharma
 
 class MedCollection(models.Model):
     nom_med = models.CharField(max_length=75, default="med")
     qte = models.IntegerField(default=0)
     price = models.IntegerField(default=0)
-    owner = models.ForeignKey(Pharma, on_delete=models.CASCADE)
+    owner = models.ForeignKey(Pharma, on_delete=models.CASCADE, default=first_pharma)
     date_per = models.CharField(max_length=35, default="2028")
     sync_code = models.IntegerField(default=0)
 
-    def __str__(self) -> str:
-        return f"{(self.nom_med)[:10]}, {self.price}:{self.owner.name_pharma}"
+    # def __str__(self) -> str:
+    #     return f"{(self.nom_med)[:10]}, {self.price}"

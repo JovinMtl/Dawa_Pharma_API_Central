@@ -75,7 +75,7 @@ class GeneralOperations(viewsets.ViewSet):
     def seTup(self, request):
         user = request.user
         is_pharma = None
-        pharmas = Pharma.objects.all()
+        pharmas = MedCollection.objects.all()
         return Response({
             'response': len(pharmas)
         })
@@ -140,6 +140,7 @@ class InputOperations(viewsets.ViewSet):
         print(f"His username: {user.username}, of type:{type(user)}")
         user_obj = User.objects.get(username=user.username)
         new_pharma = Pharma.objects.create(owner=user_obj)
+        new_pharma.name_pharma = user_obj.username
         last_pharma = Pharma.objects.last()
         last_code = 1001
         if last_pharma:
