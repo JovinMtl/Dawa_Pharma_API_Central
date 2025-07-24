@@ -2,7 +2,8 @@ from django.http import JsonResponse
 from django.db.models import Q
 from django.utils import timezone
 from django.contrib.auth.models import User
-from django.db.utils import OperationalError
+# from django.db.utils import OperationalError
+from django.core.paginator import Paginator
 # from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -54,7 +55,39 @@ class GeneralOperations(viewsets.ViewSet):
             })
     
     @action(methods=['post', 'get'], detail=False,\
-             permission_classes= [ IsAuthenticated ])
+             permission_classes= [AllowAny])
+    def search_meds_public(self, request):
+        """
+        gives the length of the collection.
+        """
+        # meds_len = MedCollection.objects.filter(qte__gte=1).count()
+        query = request.data.get("query", {'value':{"query":''}})
+        page = query.get('page')
+        max_page = 1
+        query = query.get('query')
+        # query = str(query).strip()
+        print(f"the query: {query}")
+        # return Response({
+        #     'response': 0
+        # })
+        queryset = MedCollection.objects.filter(nom_med__icontains=query)
+        query_paginate = Paginator(queryset, 5)
+        wanted_page = query_paginate.get_page(page)
+        queryset_s = MedCollectionSeria(wanted_page, many=True)
+        
+        if len(queryset) <= 5:
+            max_page = 1
+        else:
+            max_page = len(queryset) / 5
+        if queryset_s.is_valid:
+            return Response({
+                'response': queryset_s.data,
+                'page': page,
+                'max_page': max_page,
+            })
+    
+    @action(methods=['get'], detail=False,\
+             permission_classes= [ AllowAny ])
     def get_pharmas(self, request):
         user = request.user
         pharma = Pharma.objects.all()
@@ -65,6 +98,8 @@ class GeneralOperations(viewsets.ViewSet):
             pha_s = PharmaSeria(pha)
             if pha_s.is_valid:
                 pharma_obj[pha.id] = pha_s.data
+        
+        print(f"THe pharma_obj: {pharma_obj}")
         
         return Response({
             'response': pharma_obj
