@@ -60,16 +60,11 @@ class GeneralOperations(viewsets.ViewSet):
         """
         gives the length of the collection.
         """
-        # meds_len = MedCollection.objects.filter(qte__gte=1).count()
         query = request.data.get("query", {'value':{"query":''}})
         page = query.get('page')
         max_page = 1
         query = query.get('query')
-        # query = str(query).strip()
-        print(f"the query: {query}")
-        # return Response({
-        #     'response': 0
-        # })
+        
         queryset = MedCollection.objects.filter(nom_med__icontains=query)
         query_paginate = Paginator(queryset, 5)
         wanted_page = query_paginate.get_page(page)
