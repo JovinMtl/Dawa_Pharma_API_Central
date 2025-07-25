@@ -64,6 +64,7 @@ class GeneralOperations(viewsets.ViewSet):
         page = query.get('page')
         max_page = 1
         query = query.get('query')
+        query = str(query).strip()
         
         queryset = MedCollection.objects.filter(nom_med__icontains=query)
         query_paginate = Paginator(queryset, 5)
