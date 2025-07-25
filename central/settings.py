@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-!t^k^vv^ss&#!gc(wuwbtxmgz9_dgqu*%037vxhvz8q=q1z(1&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'https://ubuzima.vercel.app/']
 
 
 # Application definition
