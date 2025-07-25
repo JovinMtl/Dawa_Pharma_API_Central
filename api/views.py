@@ -78,7 +78,7 @@ class GeneralOperations(viewsets.ViewSet):
         if len(queryset) <= 5:
             max_page = 1
         else:
-            max_page = len(queryset) / 5
+            max_page = round(len(queryset) / 5)
         if queryset_s.is_valid:
             return Response({
                 'response': queryset_s.data,
