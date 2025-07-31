@@ -16,7 +16,7 @@ class Pharma(models.Model):
     code_pharma = models.IntegerField(default=1000)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, default=first_user)
     tel = models.IntegerField(default=0)
-    loc_street = models.CharField(max_length=15, default="13")
+    loc_street = models.CharField("loc_street (< 35 lettres)", max_length=35, default="13")
     loc_quarter = models.CharField(max_length=15, default="Kamenge")
     loc_commune = models.CharField(max_length=15, default="Ntahangwa")
     loc_Province = models.CharField(max_length=15, default="Bujumbura")
